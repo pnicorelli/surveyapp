@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    <title><?= PageTitle ?></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: whitesmoke;
+            font-family: 'Montserrat';
+            font-size: 22px;
+        }
+        p {
+            text-align: center;
+            margin: 20px;          
+        }
+        .layout-option {
+            display: inline-block;
+            margin: 20px;
+            cursor: pointer;
+            position: relative;
+        }
+        .img-title{
+            display: block;
+            letter-spacing: 1rem;
+        }        
+        img {
+            width: 80%;
+            height: auto;
+            border: 2px solid transparent;
+            margin-bottom: 50px;
+        }
+        img:hover {
+            border: 2px solid green !important;
+        }
+        input[type="radio"] {
+            display: none;
+        }
+        input[type="radio"]:checked + img {
+            border-color: green;
+        }
+        .confirm-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(4, 170, 109, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            display: none;
+            width: 60%;
+            text-align: center;
+        }
+        .thank-you {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(4, 170, 109, 0.95);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+    <script>
+        let selectedLayout = null;
+        let confirmStep = false;
+        
+        function selectLayout(element, layoutValue) {
+            // Reset any previously selected layout
+            document.querySelectorAll('.layout-option').forEach(option => {
+                const confirmMsg = option.querySelector('.confirm-message');
+                if (confirmMsg) confirmMsg.style.display = 'none';
+            });
+            
+            // If clicking the same layout again and we're in confirm step
+            if (selectedLayout === layoutValue && confirmStep) {
+                // Submit the vote
+                const data = { layout: layoutValue };
+                google.script.run.withSuccessHandler(onSuccess).vote(data);
+                return;
+            }
+            
+            // First click on any layout
+            selectedLayout = layoutValue;
+            confirmStep = true;
+            
+            // Check the radio button
+            const radioInput = element.querySelector('input[type="radio"]');
+            radioInput.checked = true;
+            
+            // Show confirm message
+            const confirmMsg = element.querySelector('.confirm-message');
+            confirmMsg.style.display = 'block';
+        }
+        
+        function onSuccess() {
+            // Show thank you screen
+            document.getElementById('thankYou').style.display = 'flex';
+            
+            // Hide after 30 seconds (optional)
+            setTimeout(() => {
+                document.getElementById('thankYou').style.display = 'none';
+                // Reset form
+                document.querySelectorAll('input[type="radio"]').forEach(input => {
+                    input.checked = false;
+                });
+                document.querySelectorAll('.confirm-message').forEach(msg => {
+                    msg.style.display = 'none';
+                });
+                selectedLayout = null;
+                confirmStep = false;
+            }, 30000);
+        }
+    </script>    
+</head>
+<body>
+    <h1><?= PageTitle ?></h1>
+    <p><?= PageDescription ?></p>
+    <p><b>Click on the picture you like more.</b></p>
+    
+    <div class="thank-you" id="thankYou">THANK YOU!</div>
+    
+    <div>
+      <? for (var i = 0; i < imageData.length; i++) { ?>
+        <div class="layout-option" onclick="selectLayout(this, '<?= String.fromCharCode(65 + i) ?>')">
+          <span class="img-title"><?= imageData[i][0] ?></span>
+          <input type="radio" name="layout" value="<?= i+1 ?>">
+          <img src="<?= imageData[i][1] ?>" alt="<?= imageData[i][0] ?>">
+          <div class="confirm-message">Click again to submit</div>
+        </div>
+      <? } ?>
+
+    </div>
+</body>
+</html>
