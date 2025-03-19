@@ -2,6 +2,8 @@
 
 A serverless web-based survey application built with Google Apps Script that allows users to vote for their preferred layout design. The application displays multiple layout options, records votes in a Google Spreadsheet, and shows a thank you message after submission.
 
+![screenshot](./screenshot.png)
+
 ## Features
 
 - Customizable title and description
@@ -26,7 +28,7 @@ When a user selects a layout and confirms their choice, the vote is recorded in 
 ### Step 1: Set Up the Google Spreadsheet
 
 1. Make a copy of the Google Sheet template:
-   [Layout Survey Template](https://docs.google.com/spreadsheets/d/1u-OKV3wOm1TSTV9ZfKsUkPRn4ymQ_zatYBUSOhudWuw/copy)
+   [Layout Survey Template](https://docs.google.com/spreadsheets/d/1u-OKV3wOm1TSTV9ZfKsUkPRn4ymQ_zatYBUSOhudWuw)
 2. Go to the "data" sheet and remove all existing entries
 3. Configure your survey on the "config" sheet:
    - Set your survey title
